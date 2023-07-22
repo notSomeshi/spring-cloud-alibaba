@@ -28,7 +28,7 @@ import com.alibaba.cloud.nacos.client.NacosPropertySource;
  */
 public final class NacosPropertySourceRepository {
 
-	private final static ConcurrentHashMap<String, NacosPropertySource> NACOS_PROPERTY_SOURCE_REPOSITORY = new ConcurrentHashMap<>();
+	private final static ConcurrentHashMap<String, NacosPropertySource> NPS_REPOSITORY = new ConcurrentHashMap<>();
 
 	private NacosPropertySourceRepository() {
 
@@ -38,7 +38,7 @@ public final class NacosPropertySourceRepository {
 	 * @return all nacos properties from application context.
 	 */
 	public static List<NacosPropertySource> getAll() {
-		return new ArrayList<>(NACOS_PROPERTY_SOURCE_REPOSITORY.values());
+		return new ArrayList<>(NPS_REPOSITORY.values());
 	}
 
 	/**
@@ -48,7 +48,7 @@ public final class NacosPropertySourceRepository {
 	@Deprecated
 	public static void collectNacosPropertySources(
 			NacosPropertySource nacosPropertySource) {
-		NACOS_PROPERTY_SOURCE_REPOSITORY.putIfAbsent(nacosPropertySource.getDataId(),
+		NPS_REPOSITORY.putIfAbsent(nacosPropertySource.getDataId(),
 				nacosPropertySource);
 	}
 
@@ -60,19 +60,19 @@ public final class NacosPropertySourceRepository {
 	 */
 	@Deprecated
 	public static NacosPropertySource getNacosPropertySource(String dataId) {
-		return NACOS_PROPERTY_SOURCE_REPOSITORY.get(dataId);
+		return NPS_REPOSITORY.get(dataId);
 	}
 
 	public static void collectNacosPropertySource(
 			NacosPropertySource nacosPropertySource) {
-		NACOS_PROPERTY_SOURCE_REPOSITORY
+		NPS_REPOSITORY
 				.putIfAbsent(getMapKey(nacosPropertySource.getDataId(),
 						nacosPropertySource.getGroup()), nacosPropertySource);
 	}
 
 	public static NacosPropertySource getNacosPropertySource(String dataId,
 			String group) {
-		return NACOS_PROPERTY_SOURCE_REPOSITORY.get(getMapKey(dataId, group));
+		return NPS_REPOSITORY.get(getMapKey(dataId, group));
 	}
 
 	public static String getMapKey(String dataId, String group) {

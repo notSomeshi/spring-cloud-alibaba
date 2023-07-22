@@ -53,38 +53,6 @@ public class DataSourcePropertiesConfiguration {
 	public DataSourcePropertiesConfiguration() {
 	}
 
-	public DataSourcePropertiesConfiguration(ConsulDataSourceProperties consul) {
-		this.consul = consul;
-	}
-
-	public ConsulDataSourceProperties getConsul() {
-		return consul;
-	}
-
-	public void setConsul(ConsulDataSourceProperties consul) {
-		this.consul = consul;
-	}
-
-	public DataSourcePropertiesConfiguration(FileDataSourceProperties file) {
-		this.file = file;
-	}
-
-	public DataSourcePropertiesConfiguration(NacosDataSourceProperties nacos) {
-		this.nacos = nacos;
-	}
-
-	public DataSourcePropertiesConfiguration(ZookeeperDataSourceProperties zk) {
-		this.zk = zk;
-	}
-
-	public DataSourcePropertiesConfiguration(ApolloDataSourceProperties apollo) {
-		this.apollo = apollo;
-	}
-
-	public DataSourcePropertiesConfiguration(RedisDataSourceProperties redis) {
-		this.redis = redis;
-	}
-
 	public FileDataSourceProperties getFile() {
 		return file;
 	}
@@ -115,14 +83,6 @@ public class DataSourcePropertiesConfiguration {
 
 	public void setApollo(ApolloDataSourceProperties apollo) {
 		this.apollo = apollo;
-	}
-
-	public RedisDataSourceProperties getRedis() {
-		return redis;
-	}
-
-	public void setRedis(RedisDataSourceProperties redis) {
-		this.redis = redis;
 	}
 
 	@JsonIgnore

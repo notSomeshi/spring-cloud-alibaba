@@ -69,9 +69,8 @@ public class NacosPropertySource extends MapPropertySource {
 		this(group, dataId, getSourceMap(group, dataId, propertySources), timestamp,
 				isRefreshable);
 	}
-
-	private static Map<String, Object> getSourceMap(String group, String dataId,
-			List<PropertySource<?>> propertySources) {
+	// Edited method
+	private static Map<String, Object> getSourceMap(String group, String dataId, List<PropertySource<?>> propertySources) {
 		if (CollectionUtils.isEmpty(propertySources)) {
 			return Collections.emptyMap();
 		}
@@ -94,23 +93,30 @@ public class NacosPropertySource extends MapPropertySource {
 				// propertySources will be multiple documents, and every document is a
 				// map.
 				// see org.springframework.boot.env.YamlPropertySourceLoader#load
-				Map<String, Object> source = mapPropertySource.getSource();
-				sourceMap.putAll(source);
+				processMapPropertySource(sourceMap, mapPropertySource);
 			}
 			else {
 				otherTypePropertySources.add(propertySource);
 			}
 		}
-
 		// Other property sources which is not instanceof MapPropertySource will be put as
 		// it is,
 		// and the internal elements cannot be directly retrieved,
 		// so the user needs to implement the retrieval logic by himself
+		processOtherTypePropertySources(group, dataId, sourceMap, otherTypePropertySources);
+		return sourceMap;
+	}
+
+	private static void processMapPropertySource(Map<String, Object> sourceMap, MapPropertySource mapPropertySource) {
+		Map<String, Object> source = mapPropertySource.getSource();
+		sourceMap.putAll(source);
+	}
+
+	private static void processOtherTypePropertySources(String group, String dataId, Map<String, Object> sourceMap, List<PropertySource<?>> otherTypePropertySources) {
 		if (!otherTypePropertySources.isEmpty()) {
 			sourceMap.put(String.join(NacosConfigProperties.COMMAS, dataId, group),
 					otherTypePropertySources);
 		}
-		return sourceMap;
 	}
 
 	public String getGroup() {

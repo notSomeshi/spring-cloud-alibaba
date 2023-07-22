@@ -137,16 +137,20 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 			NacosConfigProperties properties, Environment environment) {
 		String fileExtension = properties.getFileExtension();
 		String nacosGroup = properties.getGroup();
+		String dataIdAndGroup = dataIdPrefix + ":" + nacosGroup;
 		// load directly once by default
-		loadNacosDataIfPresent(compositePropertySource, dataIdPrefix, nacosGroup,
+		loadNacosDataIfPresent(compositePropertySource, dataIdAndGroup,
 				fileExtension, true);
 		// load with suffix, which have a higher priority than the default
+		String dataIdAndGroupWithSuffix = dataIdAndGroup + DOT + fileExtension + ":"
+				+ nacosGroup;
 		loadNacosDataIfPresent(compositePropertySource,
-				dataIdPrefix + DOT + fileExtension, nacosGroup, fileExtension, true);
+				dataIdAndGroupWithSuffix, fileExtension, true);
 		// Loaded with profile, which have a higher priority than the suffix
 		for (String profile : environment.getActiveProfiles()) {
 			String dataId = dataIdPrefix + SEP1 + profile + DOT + fileExtension;
-			loadNacosDataIfPresent(compositePropertySource, dataId, nacosGroup,
+			String dataIdAndGroupWithProfile = dataId + ":" + nacosGroup;
+			loadNacosDataIfPresent(compositePropertySource, dataIdAndGroupWithProfile,
 					fileExtension, true);
 		}
 
@@ -155,7 +159,8 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 	private void loadNacosConfiguration(final CompositePropertySource composite,
 			List<NacosConfigProperties.Config> configs) {
 		for (NacosConfigProperties.Config config : configs) {
-			loadNacosDataIfPresent(composite, config.getDataId(), config.getGroup(),
+			String dataIdAndGroup = config.getDataId() + ":" + config.getGroup();
+			loadNacosDataIfPresent(composite, dataIdAndGroup,
 					NacosDataParserHandler.getInstance()
 							.getFileExtension(config.getDataId()),
 					config.isRefresh());
@@ -175,8 +180,14 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 	}
 
 	private void loadNacosDataIfPresent(final CompositePropertySource composite,
-			final String dataId, final String group, String fileExtension,
-			boolean isRefreshable) {
+										final String dataIdAndGroup, String fileExtension, boolean isRefreshable) {
+		String[] parts = dataIdAndGroup.split(":");
+		if (parts.length != 2) {
+			throw new IllegalArgumentException("Invalid dataIdAndGroup: " + dataIdAndGroup);
+		}
+		String dataId = parts[0];
+		String group = parts[1];
+
 		if (null == dataId || dataId.trim().length() < 1) {
 			return;
 		}
@@ -187,6 +198,7 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 				fileExtension, isRefreshable);
 		this.addFirstPropertySource(composite, propertySource, false);
 	}
+
 
 	private NacosPropertySource loadNacosPropertySource(final String dataId,
 			final String group, String fileExtension, boolean isRefreshable) {
